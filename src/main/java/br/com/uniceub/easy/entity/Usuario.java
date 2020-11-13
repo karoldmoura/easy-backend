@@ -4,9 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.math.BigInteger;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -23,11 +22,11 @@ public class Usuario extends EntityAbstract<Long> {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "id_setor")
+    @JoinColumn(name = "id_setor")
     private Setor setor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(columnDefinition = "ds_uf")
+    @JoinColumn(name = "ds_uf")
     private Estado uf;
 
     @Column(name = "ds_nome", nullable = false)
@@ -49,7 +48,7 @@ public class Usuario extends EntityAbstract<Long> {
     private String bairro;
 
     @Column(name = "dt_nascimento", nullable = false)
-    private Date nascimento;
+    private LocalDate nascimento;
 
     @Column(name = "fl_sexo", nullable = false)
     private String sexo;
