@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `easy`.`tb_usuario` (
   `dt_nascimento` DATE NOT NULL,
   `fl_sexo` CHAR(1) NOT NULL,
   `ds_login` VARCHAR(45) NOT NULL,
-  `ds_senha` VARCHAR(45) NULL DEFAULT NULL,
+  `ds_senha` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`nu_matricula`),
   CONSTRAINT `fk_tb_usuario_tb_uf`
         FOREIGN KEY (`ds_uf`)
