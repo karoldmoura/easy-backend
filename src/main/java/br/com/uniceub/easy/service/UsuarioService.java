@@ -1,6 +1,7 @@
 package br.com.uniceub.easy.service;
 
 import br.com.uniceub.easy.entity.Usuario;
+import br.com.uniceub.easy.exception.EasyException;
 import br.com.uniceub.easy.repository.IUsuarioRepository;
 import br.com.uniceub.easy.security.UserPrincipal;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,6 @@ public class UsuarioService
         return UserPrincipal.create(usuario);
     }
 
-
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Usuario usuario = repository.findByLogin(login)
@@ -43,5 +43,16 @@ public class UsuarioService
                         () -> new UsernameNotFoundException("Usuário não encontrado com o Login: " + login)
                 );
         return UserPrincipal.create(usuario);
+    }
+
+    @Override
+    public Usuario salvar(Usuario usuario) {
+        try {
+            usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
+            return super.salvar(usuario);
+        }catch (Exception e){
+            throw new EasyException("erro.persistir");
+        }
     }
 }
