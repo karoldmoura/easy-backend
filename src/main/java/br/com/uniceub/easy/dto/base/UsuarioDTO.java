@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import java.math.BigInteger;
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -28,9 +28,7 @@ public class UsuarioDTO {
     private String senha;
 
     @NotBlank(message = "valid.naoinformado:CPF")
-    private String cpf;
-
-    private String tokenApp;
+    private BigInteger cpf;
 
     @NotBlank(message = "valid.naoinformado:Login")
     private String login;
