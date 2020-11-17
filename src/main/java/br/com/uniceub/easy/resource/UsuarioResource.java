@@ -28,9 +28,9 @@ public class UsuarioResource {
 
         Usuario usuario = ConverterUtil.deepConvertToDTO(dto, Usuario.class);
 
-        service.salvar(usuario);
+        UsuarioDTO usuarioDTO = ConverterUtil.converterToDTO(service.salvar(usuario), UsuarioDTO.class);
 
-        return ResponseEntity.ok(new ResponseDTO(null, "sucesso.salvo:Usuário"));
+        return ResponseEntity.ok(new ResponseDTO(usuarioDTO, "sucesso.salvo:Usuário"));
     }
 
     @PutMapping("{id}")
@@ -45,9 +45,9 @@ public class UsuarioResource {
         return ResponseEntity.ok(new ResponseDTO(null, "sucesso.salvo:Usuário"));
     }
 
-    @GetMapping
+    @GetMapping("{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDTO> buscarPorId(Long id) {
+    public ResponseEntity<ResponseDTO> buscarPorId(@PathVariable Long id) {
 
         UsuarioDTO dto = Converter.usuarioToUsuarioDTO(service.buscarPorId(id));
 

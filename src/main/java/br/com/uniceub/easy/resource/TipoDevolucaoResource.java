@@ -6,6 +6,7 @@ import br.com.uniceub.easy.entity.TipoDevolucao;
 import br.com.uniceub.easy.service.TipoDevolucaoService;
 import br.com.uniceub.easy.utils.ConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class TipoDevolucaoResource {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResponseDTO> buscarPorId(@RequestParam Long id){
+    public ResponseEntity<ResponseDTO> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(
                 new ResponseDTO(
                         ConverterUtil.converterToDTO(
@@ -47,25 +48,34 @@ public class TipoDevolucaoResource {
 
     @GetMapping("paginacao")
     public ResponseEntity<ResponseDTO> paginacao(@PageableDefault Pageable pageable){
-        List<TipoDevolucaoDTO> lista = service.listar(pageable)
-                .stream()
+        Page<TipoDevolucaoDTO> lista = service.listar(pageable)
                 .map(tipo ->
-                        ConverterUtil.converterToDTO(tipo, TipoDevolucaoDTO.class, "devolucoes"))
-                .collect(Collectors.toList());
+                        ConverterUtil.converterToDTO(tipo, TipoDevolucaoDTO.class, "devolucoes"));
 
         return ResponseEntity.ok(new ResponseDTO(lista));
     }
 
     @PostMapping
     public ResponseEntity<ResponseDTO> salvar(@RequestBody TipoDevolucaoDTO dto){
-        service.salvar(ConverterUtil.converterToDTO(dto, TipoDevolucao.class));
+        TipoDevolucaoDTO tipoDevolucao = ConverterUtil.converterToDTO(
+                service.salvar(ConverterUtil.converterToDTO(dto, TipoDevolucao.class)),
+                TipoDevolucaoDTO.class,
+                "devolucoes"
+        );
 
-        return ResponseEntity.ok(new ResponseDTO());
+        return ResponseEntity.ok(new ResponseDTO(tipoDevolucao));
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<ResponseDTO> alterar(@RequestParam Long id, @RequestBody String descricao){
+    public ResponseEntity<ResponseDTO> alterar(@PathVariable Long id, @RequestBody String descricao){
         service.editar(new TipoDevolucao(id, descricao, null));
+        return ResponseEntity.ok(new ResponseDTO());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ResponseDTO> excluir(@PathVariable Long id){
+        service.excluir(id);
+
         return ResponseEntity.ok(new ResponseDTO());
     }
 }

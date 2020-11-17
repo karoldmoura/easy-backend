@@ -6,6 +6,7 @@ import br.com.uniceub.easy.entity.TipoPagamento;
 import br.com.uniceub.easy.service.TipoPagamentoService;
 import br.com.uniceub.easy.utils.ConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class TipoPagamentoResource {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ResponseDTO> buscarPorId(@RequestParam Long id){
+    public ResponseEntity<ResponseDTO> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(
                 new ResponseDTO(
                         ConverterUtil.converterToDTO(
@@ -47,25 +48,32 @@ public class TipoPagamentoResource {
 
     @GetMapping("paginacao")
     public ResponseEntity<ResponseDTO> paginacao(@PageableDefault Pageable pageable){
-        List<TipoPagamentoDTO> lista = service.listar(pageable)
-                .stream()
+        Page<TipoPagamentoDTO> lista = service.listar(pageable)
                 .map(tipo ->
-                        ConverterUtil.converterToDTO(tipo, TipoPagamentoDTO.class, "vendas"))
-                .collect(Collectors.toList());
-
+                        ConverterUtil.converterToDTO(tipo, TipoPagamentoDTO.class, "vendas"));
         return ResponseEntity.ok(new ResponseDTO(lista));
     }
 
     @PostMapping
     public ResponseEntity<ResponseDTO> salvar(@RequestBody TipoPagamentoDTO dto){
-        service.salvar(ConverterUtil.converterToDTO(dto, TipoPagamento.class));
+        TipoPagamentoDTO tipoPagamento = ConverterUtil.converterToDTO(
+                service.salvar(ConverterUtil.converterToDTO(dto, TipoPagamento.class)),
+                TipoPagamentoDTO.class,
+                "vendas"
+        );
 
-        return ResponseEntity.ok(new ResponseDTO());
+        return ResponseEntity.ok(new ResponseDTO(tipoPagamento));
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<ResponseDTO> alterar(@RequestParam Long id, @RequestBody String descricao){
+    public ResponseEntity<ResponseDTO> alterar(@PathVariable Long id, @RequestBody String descricao){
         service.editar(new TipoPagamento(id, descricao, null));
+        return ResponseEntity.ok(new ResponseDTO());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ResponseDTO> excluir(@PathVariable Long id){
+        service.excluir(id);
         return ResponseEntity.ok(new ResponseDTO());
     }
 }
